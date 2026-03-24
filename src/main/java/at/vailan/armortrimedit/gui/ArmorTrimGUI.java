@@ -9,6 +9,9 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.meta.trim.ArmorTrim;
+import org.bukkit.inventory.meta.trim.TrimMaterial;
+import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -32,7 +35,7 @@ public class ArmorTrimGUI {
 
     public ArmorTrimGUI(Player p) {
         this.player = p;
-        this.inventory = Bukkit.createInventory(player, 54, "ArmorTrimEdit");
+        this.inventory = Bukkit.createInventory(player, 54, getInstance().getGUITitle());
         buildInventory(player);
     }
 
@@ -52,32 +55,40 @@ public class ArmorTrimGUI {
     public Inventory getInventory() { return inventory; }
 
     private ItemStack createApplyButton() {
-        return newItem("§aApply Armor Trim", Material.LIME_CONCRETE);
+        return newItem("<green>Apply Armor Trim</green>", Material.LIME_CONCRETE);
     }
 
-    private ItemStack createRemoveButton() { return newItem("§cRemove Armor Trim", Material.BARRIER); }
+    private ItemStack createRemoveButton() { return newItem("<red>Remove Armor Trim</red>", Material.BARRIER); }
 
-    private ItemStack createCloseButton() { return newItem("§4Close Menu", Material.RED_CONCRETE); }
+    private ItemStack createCloseButton() { return newItem("<dark_red>Close Menu</dark_red>", Material.RED_CONCRETE); }
 
     private ItemStack createDisplayItem(Player player) {
         ItemStack item = player.getInventory().getItemInMainHand();
-        ItemStack displayItem = item.clone();
 
         if (!(item.getItemMeta() instanceof ArmorMeta meta)) {
             player.sendMessage(getInstance().getMessage("not-holding-armor"));
 
-            return newItem("§cInvalid Item", Material.BARRIER);
+            return newItem("<red>Invalid Item</red>", Material.BARRIER);
         }
 
-        if (meta.hasTrim()) {
-            ArmorMeta armorMeta = (ArmorMeta) displayItem.getItemMeta();
-            armorMeta.setTrim(meta.getTrim());
-            displayItem.setItemMeta(armorMeta);
-        }
+        ArmorTrimData data = ArmorTrimController.get().get(player);
+        TrimPattern p = data.getPattern();
+        TrimMaterial m = data.getMaterial();
 
-        ItemMeta finalMeta = displayItem.getItemMeta();
-        finalMeta.displayName(Component.text(item.getType().toString()).decoration(TextDecoration.ITALIC, false));
-        displayItem.setItemMeta(finalMeta);
+        ItemStack displayItem = new ItemStack(item.getType(), item.getAmount());
+        ArmorMeta armorMeta = meta.clone();
+        ArmorTrim existingTrim = meta.hasTrim() ? meta.getTrim() : null;
+
+        TrimPattern finalPattern = p != null ? p : (existingTrim != null ? existingTrim.getPattern() : null);
+        TrimMaterial finalMaterial = m != null ? m : (existingTrim != null ? existingTrim.getMaterial() : null);
+
+        if (finalPattern != null && finalMaterial != null) {
+            armorMeta.setTrim(new ArmorTrim(finalMaterial, finalPattern));
+        } else {
+            armorMeta.setTrim(null);
+        }
+        
+        displayItem.setItemMeta(armorMeta);
 
         return displayItem;
     }
@@ -92,7 +103,7 @@ public class ArmorTrimGUI {
             ItemStack stack = newItem(item.display, item.material);
 
             if (item.trimPattern.equals(data.getPattern())) {
-                stack = addGlint(stack);
+                stack = applySelectedVisuals(stack);
             }
 
             inv.setItem(slot, stack);
@@ -109,7 +120,7 @@ public class ArmorTrimGUI {
             ItemStack stack = newItem(item.display, item.material);
 
             if (item.trimMaterial.equals(data.getMaterial())) {
-                stack = addGlint(stack);
+                stack = applySelectedVisuals(stack);
             }
 
             inv.setItem(slot, stack);
@@ -125,20 +136,36 @@ public class ArmorTrimGUI {
     protected static ItemStack newItem(String name, Material material) {
         ItemStack item = new ItemStack(material, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text(name).decoration(TextDecoration.ITALIC, false));
+        meta.displayName(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize("<!italic>" + name));
         item.setItemMeta(meta);
 
         return item;
     }
 
-    protected static ItemStack addGlint(ItemStack item) {
+    protected static ItemStack applySelectedVisuals(ItemStack item) {
         ItemStack clone = item.clone();
-        ItemMeta meta = clone.getItemMeta();
-        if (meta != null) {
-            meta.addEnchant(Enchantment.UNBREAKING, 1, true);
-            meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
-            clone.setItemMeta(meta);
+        
+        if (getInstance().getConfig().getBoolean("gui.selected-glint", true)) {
+            ItemMeta meta = clone.getItemMeta();
+            if (meta != null) {
+                meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+                meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
+                clone.setItemMeta(meta);
+            }
         }
+        
+        String loreConfig = getInstance().getConfig().getString("gui.selected-lore", "");
+        if (!loreConfig.isEmpty()) {
+            ItemMeta meta = clone.getItemMeta();
+            if (meta != null) {
+                java.util.List<Component> lore = meta.hasLore() ? meta.lore() : new java.util.ArrayList<>();
+                assert lore != null;
+                lore.add(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(loreConfig).decoration(TextDecoration.ITALIC, false));
+                meta.lore(lore);
+                clone.setItemMeta(meta);
+            }
+        }
+        
         return clone;
     }
 

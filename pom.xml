@@ -43,10 +43,21 @@
                                     <shadedPattern>at.vailan.armortrimedit.libs.bstats</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>at.vailan.minecraftutils</pattern>
-                                    <shadedPattern>at.vailan.armortrimedit.libs.minecraftutils</shadedPattern>
+                                    <pattern>revxrsal.commands</pattern>
+                                    <shadedPattern>at.vailan.armortrimedit.libs.lamp</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <minimizeJar>false</minimizeJar>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
@@ -75,9 +86,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>at.vailan</groupId>
-            <artifactId>minecraftutils</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <groupId>io.github.revxrsal</groupId>
+            <artifactId>lamp.common</artifactId>
+            <version>4.0.0-rc.16</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.revxrsal</groupId>
+            <artifactId>lamp.bukkit</artifactId>
+            <version>4.0.0-rc.16</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

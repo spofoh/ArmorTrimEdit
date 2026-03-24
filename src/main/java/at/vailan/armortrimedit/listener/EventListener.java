@@ -11,20 +11,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import static at.vailan.armortrimedit.ArmorTrimEdit.getInstance;
 
 public class EventListener implements Listener {
 
-    private static final String GUI_TITLE = "ArmorTrimEdit";
-
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) {
             return;
         }
-        if (!GUI_TITLE.equals(event.getView().getTitle())) {
+        String viewTitle = PlainTextComponentSerializer.plainText().serialize(event.getView().title());
+        if (!getInstance().getGUITitlePlain().equals(viewTitle)) {
             return;
         }
 
@@ -74,19 +74,25 @@ public class EventListener implements Listener {
     }
 
     private void refreshGUI(Player player) {
-        ArmorTrimGUIOpener.open(player);
+        at.vailan.armortrimedit.manager.SchedulerUtil.runDelayed(at.vailan.armortrimedit.ArmorTrimEdit.getInstance(), player, () -> ArmorTrimGUIOpener.open(player), 1L);
     }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player player)) return;
 
-        if (!GUI_TITLE.equals(event.getView().getTitle())) return;
+        String viewTitle = PlainTextComponentSerializer.plainText().serialize(event.getView().title());
+        if (!getInstance().getGUITitlePlain().equals(viewTitle)) return;
 
         if (event.getReason() != InventoryCloseEvent.Reason.OPEN_NEW) {
             ArmorTrimController.get().onClose(player);
         }
 
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        ArmorTrimController.get().onClose(event.getPlayer());
     }
 
 }

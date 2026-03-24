@@ -1,14 +1,20 @@
-prefix: "§8[§bArmorTrimEdit§8] "
+prefix: "<dark_gray>[<aqua>ArmorTrimEdit</aqua>]</dark_gray> "
 
 messages:
-  no-permission: "§4No permission!"
-  not-holding-armor: "§cThe item in your hand is not an armor item!"
-  missing-items: "§cYou don't have the required items in your inventory!"
-  not-enough-arguments: "§cNot enough arguments!"
-  invalid-pattern-or-material: "§cInvalid pattern or material!"
-  no-armor-trim: "§cThe item doesn't have an armor armor trim!"
+  no-permission: "<dark_red>No permission!</dark_red>"
+  not-holding-armor: "<red>The item in your hand is not an armor item!</red>"
+  missing-items: "<red>You don't have the required items in your inventory!</red>"
+  not-enough-arguments: "<red>Not enough arguments!</red>"
+  invalid-pattern-or-material: "<red>Invalid pattern or material!</red>"
+  no-armor-trim: "<red>The item doesn't have an armor trim!</red>"
+  reloaded: "<green>Plugin successfully reloaded!</green>"
 
 gui-enabled: true
+
+gui:
+  title: "<dark_gray>ArmorTrimEdit</dark_gray>"
+  selected-glint: true
+  selected-lore: "<green>▶ Selected</green>"
 
 command-enabled: true
 

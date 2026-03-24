@@ -37,9 +37,7 @@ public class ArmorTrimController {
     }
 
     public void reset(Player player) {
-        ArmorTrimData d = get(player);
-        d.setPattern(null);
-        d.setMaterial(null);
+        remove(player);
     }
 
     public void remove(Player player) {
@@ -49,11 +47,6 @@ public class ArmorTrimController {
     public void applyTrim(Player player) {
         ArmorTrimData d = get(player);
 
-        TrimPattern p = d.getPattern();
-        TrimMaterial m = d.getMaterial();
-
-        if (m == null || p == null) { return; }
-
         ItemStack item = player.getInventory().getItemInMainHand();
 
         if (!(item.getItemMeta() instanceof ArmorMeta meta)) {
@@ -61,6 +54,13 @@ public class ArmorTrimController {
 
             return;
         }
+
+        ArmorTrim existingTrim = meta.hasTrim() ? meta.getTrim() : null;
+
+        TrimPattern p = d.getPattern() != null ? d.getPattern() : (existingTrim != null ? existingTrim.getPattern() : null);
+        TrimMaterial m = d.getMaterial() != null ? d.getMaterial() : (existingTrim != null ? existingTrim.getMaterial() : null);
+
+        if (m == null || p == null) { return; }
 
         PatternItem patternItem = PatternItem.fromTrimPattern(p);
         MaterialItem materialItem = MaterialItem.fromTrimMaterial(m);
@@ -121,8 +121,6 @@ public class ArmorTrimController {
         MaterialItem material = MaterialItem.fromDisplay(key);
         if (material != null) {
             d.setMaterial(material.trimMaterial);
-
-            return;
         }
 
     }

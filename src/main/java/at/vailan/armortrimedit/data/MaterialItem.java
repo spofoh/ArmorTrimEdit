@@ -4,7 +4,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -44,17 +43,10 @@ public enum MaterialItem {
 
     public static MaterialItem fromTrimMaterial(TrimMaterial trim) {
         for (MaterialItem item : values()) {
-            if (item.trimMaterial == trim) return item;
+            if (item.trimMaterial.equals(trim)) return item;
         }
         return null;
     }
-
-    public static List<String> getAllMaterialNames() {
-        return Arrays.stream(values())
-                .map(pi -> pi.display.toLowerCase())
-                .toList();
-    }
-
 
     public static boolean isMaterial(String s) {
         return DISPLAY_MAP.containsKey(s);

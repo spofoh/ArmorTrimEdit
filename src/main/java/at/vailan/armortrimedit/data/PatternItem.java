@@ -4,7 +4,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -49,15 +48,9 @@ public enum PatternItem {
 
     public static PatternItem fromTrimPattern(TrimPattern trim) {
         for (PatternItem item : values()) {
-            if (item.trimPattern == trim) return item;
+            if (item.trimPattern.equals(trim)) return item;
         }
         return null;
-    }
-
-    public static List<String> getAllPatternNames() {
-        return Arrays.stream(values())
-                .map(pi -> pi.display.toLowerCase())
-                .toList();
     }
 
     public static boolean isPattern(String s) {

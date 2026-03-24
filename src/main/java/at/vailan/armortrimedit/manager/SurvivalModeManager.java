@@ -10,11 +10,9 @@ import java.util.Map;
 
 public class SurvivalModeManager {
 
-    private final ArmorTrimEdit plugin;
     private final boolean enabled;
 
     public SurvivalModeManager(ArmorTrimEdit plugin) {
-        this.plugin = plugin;
         this.enabled = plugin.getConfig().getBoolean("survival-mode-enabled");
     }
 
