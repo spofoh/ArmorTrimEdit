@@ -12,6 +12,7 @@
     <name>ArmorTrimEdit</name>
     <properties>
         <java.version>21</java.version>
+        <lamp.version>4.0.0-rc.18</lamp.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>
@@ -87,13 +88,13 @@
         <dependency>
             <groupId>io.github.revxrsal</groupId>
             <artifactId>lamp.common</artifactId>
-            <version>4.0.0-rc.16</version>
+            <version>${lamp.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.github.revxrsal</groupId>
             <artifactId>lamp.bukkit</artifactId>
-            <version>4.0.0-rc.16</version>
+            <version>${lamp.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
